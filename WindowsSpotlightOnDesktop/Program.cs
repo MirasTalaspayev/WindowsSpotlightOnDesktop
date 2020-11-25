@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+﻿using System.IO;
 using System.Drawing;
-
+using System;
 namespace WindowsSpotlightOnDesktop
 {
     class Program
     {
         static void Main(string[] args)
         {
-            string destination = @"C:\Users\tmk01\Desktop\Image";
+            string username = Environment.UserName;
+            string destination = @"C:\Users\" + username + @"\OneDrive\Изображения\Windows Spotlight Image";
             CopyFiles(destination);
             string[] images = Directory.GetFiles(destination);
             int r = images.Length - 1;
@@ -29,16 +25,26 @@ namespace WindowsSpotlightOnDesktop
             const int SPIF_SENDWININICHANGE = 0x02;
             Wallpaper.SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, images[r], SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
             bitmap.Dispose();
-            File.Delete(images[r]);
-            //Directory.Delete(destination, true);
+            foreach (string file in Directory.GetFiles(destination))
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
-        // Display the file on the desktop.
+
+        
         /* Copy files where Windows: Spotlight images occurs
-         * to the Images directory in the desktop
+         * to the new folder in the OneDrive 
          */
         static void CopyFiles(string destination)
         {
-            string srcpath = @"C:\Users\tmk01\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
+            string username = Environment.UserName;
+            string srcpath = @"C:\Users\" + username + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
             Directory.CreateDirectory(destination);
             if (Directory.Exists(srcpath))
             {
